@@ -1,19 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { Context } from "../context/Context";
+import useHover from "../hooks/useHover";
 
 function Image({ img, className }) {
-  const { toggleFavorite, addToCart } = useContext(Context);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleHover = () => {
-    setIsHovered(prevHover => !prevHover);
-  };
+  const { toggleFavorite, addToCart, removeFromCart, cart } =
+    useContext(Context);
+  const { isHovered, toggleHover } = useHover(false);
 
   return (
     <div
-      onMouseEnter={handleHover}
-      onMouseLeave={handleHover}
+      onMouseEnter={toggleHover}
+      onMouseLeave={toggleHover}
       className={`${className} image-container`}
     >
       {isHovered && (
@@ -24,8 +22,16 @@ function Image({ img, className }) {
       )}
       {isHovered && (
         <i
-          onClick={() => addToCart(img)}
-          className="ri-add-circle-line cart"
+          onClick={() => {
+            if (cart.some(cartItem => cartItem.id === img.id)) {
+              removeFromCart(img);
+            } else {
+              addToCart(img);
+            }
+          }}
+          className={`ri-add-circle-${
+            cart.some(cartItem => cartItem.id === img.id) ? "fill" : "line"
+          } cart`}
         ></i>
       )}
       <img alt="" src={img.url} className="image-grid" />

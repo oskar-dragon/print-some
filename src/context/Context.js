@@ -19,9 +19,18 @@ function ContextProvider(props) {
     fetchData();
   }, []);
 
-  function addToCart(newItem) {
-    setCart(prevCart => [...prevCart, newItem]);
-  }
+  const addToCart = item => {
+    setCart(prevCart => [...prevCart, item]);
+  };
+
+  const removeFromCart = item => {
+    const newArr = cart.filter(cartItem => cartItem.id !== item.id);
+    setCart(newArr);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const toggleFavorite = id => {
     const updatedArr = photos.map(photo => {
@@ -35,7 +44,16 @@ function ContextProvider(props) {
   };
 
   return (
-    <Context.Provider value={{ photos, toggleFavorite, addToCart }}>
+    <Context.Provider
+      value={{
+        photos,
+        cart,
+        toggleFavorite,
+        addToCart,
+        removeFromCart,
+        clearCart,
+      }}
+    >
       {props.children}
     </Context.Provider>
   );
